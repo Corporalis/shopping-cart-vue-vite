@@ -6,6 +6,7 @@
         :key="item.id"
         :product="item"
         @remove="removeToCart"
+        @add="addToCart"
       />
     </div>
     <p v-else>Your cart is empty.</p>
@@ -36,6 +37,6 @@ import CartItem from "./CartItem.vue";
 export default defineComponent({
   components: { CartItem },
   computed: mapGetters(["cartItems"]),
-  methods: mapMutations(["removeToCart"]),
+  methods: mapMutations(["removeToCart", "addToCart"]),
 });
 </script>

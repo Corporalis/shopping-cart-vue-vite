@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, toRefs } from "vue";
+import { CartProduct } from "@/models/CartProduct";
+import { Product } from "@/models/Product";
 import { styled } from "@vvibe/vue-styled-components";
-import { Product } from "../model/Product";
+import { ref, toRefs } from "vue";
 
 export interface CartItemProps {
-  product: Product;
+  product: CartProduct;
 }
 
 const StyledCartItem = styled.div`
@@ -14,34 +15,53 @@ const StyledCartItem = styled.div`
   text-align: center;
 `;
 
-const Button = styled.button`
-  margin-top: 10px;
-  padding: 8px 12px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  cursor: pointer;
-`;
-
 var props = defineProps<CartItemProps>();
 
 const emit = defineEmits<{
   remove: [id: number];
+  add: [product: Product];
 }>();
 
 const {
   product: { value: product },
 } = toRefs(props);
 
+const quantityReference = ref(product.quantity);
+const currentQuantityReference = ref(product.quantity);
+
 function remove() {
   emit("remove", product.id);
 }
+
+function add() {
+  emit("add", product);
+}
+
+const update = () => {
+  const { value: quantity } = quantityReference;
+  const { value: currentQuantity } = currentQuantityReference;
+
+  if (quantity < currentQuantity) {
+    remove();
+  } else {
+    add();
+  }
+
+  currentQuantityReference.value = quantity;
+};
 </script>
 
 <template>
   <StyledCartItem>
     <h2>{{ product.name }}</h2>
     <p>£{{ product.price }}</p>
-    <Button @click="remove">Remove</Button>
+    <p>
+      <input
+        type="number"
+        min="0"
+        @input="update"
+        v-model.number="quantityReference"
+      />
+    </p>
   </StyledCartItem>
 </template>

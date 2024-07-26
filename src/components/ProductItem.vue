@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, toRefs } from "vue";
+import { Product } from "@/models/Product";
 import { styled } from "@vvibe/vue-styled-components";
-import { Product } from "../model/Product";
+import { toRefs } from "vue";
 
 export interface ProductItemProps {
   product: Product;

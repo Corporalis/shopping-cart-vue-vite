@@ -1,14 +1,10 @@
+import { CartProduct } from "@/models/CartProduct";
+import { Product } from "@/models/Product";
 import { createStore } from "vuex";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-}
 
 interface State {
   products: Product[];
-  cart: Product[];
+  cart: CartProduct[];
 }
 
 const store = createStore<State>({
@@ -25,10 +21,22 @@ const store = createStore<State>({
   },
   mutations: {
     addToCart(state, product: Product) {
-      state.cart.push(product);
+      const cartProduct = state.cart.find((p) => p.id === product.id);
+      if (cartProduct) {
+        cartProduct.quantity++;
+        return;
+      }
+      const newCartProduct = { ...product, quantity: 1 };
+      state.cart.push(newCartProduct);
     },
     removeToCart(state, id: number) {
-      state.cart = state.cart.filter((product) => product.id !== id);
+      const cartProduct = state.cart.find((p) => p.id === id);
+      if (cartProduct) {
+        cartProduct.quantity--;
+        if (cartProduct.quantity === 0) {
+          state.cart = state.cart.filter((product) => product.id !== id);
+        }
+      }
     },
   },
   actions: {},
